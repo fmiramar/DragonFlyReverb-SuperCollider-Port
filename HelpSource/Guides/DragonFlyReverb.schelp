@@ -1,0 +1,25 @@
+title:: DragonFly Reverb Ports
+summary:: SuperCollider ports of Michael Willis's Dragonfly Reverb plugins
+categories:: UGens>Effects
+related:: Classes/EarlyReflectionsDF, Classes/HallDF, Classes/PlateDF, Classes/RoomDF
+
+description::
+
+The DragonFlyReverb-SuperCollider-Port project provides four native SuperCollider UGens that wrap the DSP algorithms from Michael Willis's open-source Dragonfly Reverb plugin suite. Dragonfly Reverb is heavily based on algorithms from Freeverb3 (specifically the code::earlyref::, code::zrev2::, and code::progen:: models), offering high-quality lush reverbs for a variety of acoustic spaces.
+
+This port vendors the C++ DSP core of Dragonfly Reverb directly into SuperCollider plugins, bypassing the need for a VST host or VSTPlugin while maintaining the same parameter scaling and sound character.
+
+subsection:: UGens
+
+The following four UGens are provided:
+
+list::
+## link::Classes/EarlyReflectionsDF:: - Dragonfly Early Reflections. Uses the Freeverb3 code::earlyref:: model to simulate the first few reflections of a room, providing spatial cues without a long reverberant tail.
+## link::Classes/HallDF:: - Dragonfly Hall Reverb. Combines the code::earlyref:: model with the code::zrev2:: late-reverb model to simulate large, dense acoustic spaces like concert halls.
+## link::Classes/PlateDF:: - Dragonfly Plate Reverb. Uses a modified Freeverb3 model to simulate the bright, metallic density of a physical plate reverberator.
+## link::Classes/RoomDF:: - Dragonfly Room Reverb. Combines the code::earlyref:: model with a scaled-down late-reverb model optimized for smaller, more intimate acoustic spaces.
+::
+
+subsection:: License
+
+Dragonfly Reverb and these SuperCollider ports are distributed under the GPL-3.0-or-later license.

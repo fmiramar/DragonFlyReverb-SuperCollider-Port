@@ -1,0 +1,101 @@
+class:: HallDF
+summary:: Dragonfly hall reverb UGen
+categories:: UGens>Effects
+related:: Guides/DragonFlyReverb, Classes/EarlyReflectionsDF, Classes/PlateDF, Classes/RoomDF
+
+Description::
+
+Native SuperCollider port of Michael Willis's Dragonfly Hall Reverb. This UGen combines Dragonfly's Freeverb3 `earlyref` model for early reflections with the `zrev2` late-reverb model to produce lush, dense reverberation suitable for large concert halls. 
+
+The `zrev2` algorithm is a highly modulated, Schroeder-style feedback delay network designed for complex, expansive acoustic spaces. By processing the audio first through geometric early reflection taps and then blooming into a thick, slowly decaying late tail, this UGen accurately emulates the enveloping sound of a massive physical space. It runs the identical C++ DSP code found in the upstream VST3 plugin without requiring a plugin host.
+
+classmethods::
+
+method::ar
+
+argument::inL
+Left input.
+
+argument::inR
+Right input.
+
+argument::dry
+Dry level in percent (`0..100`). Controls the volume of the unaffected input signal.
+
+argument::early
+Early-reflection level in percent (`0..100`). Controls the volume of the initial geometric echoes before the tail begins.
+
+argument::late
+Late-reverb level in percent (`0..100`). Controls the volume of the dense, blooming reverberation tail.
+
+argument::size
+Size in meters (`10..60`). Affects the overall scale of the hall. Larger sizes sound more expansive, taking longer for the reflections to build up and diffuse.
+
+argument::width
+Stereo width in percent (`50..150`). Enhances or reduces the panning extremity of the reverb to widen or narrow the stereo image.
+
+argument::predelay
+Predelay in milliseconds (`0..100`). The delay before the late reverb starts. Longer predelays separate the source from the reverb tail, increasing clarity and transient punch.
+
+argument::diffuse
+Diffusion in percent (`0..100`). Controls how quickly reflections multiply and smear. High diffusion sounds smooth and dense; low diffusion preserves distinct, echo-like delays.
+
+argument::lowCut
+Low cut frequency in Hz (`0..200`). Applies a high-pass filter to the tail to prevent low-end mud.
+
+argument::lowXover
+Low crossover frequency in Hz (`200..1200`). The frequency below which the `lowMult` decay multiplier is applied.
+
+argument::lowMult
+Low-frequency decay multiplier (`0.5..2.5`). Scales the decay time for low frequencies. Values below 1.0 simulate a space where bass dissipates quickly; values above 1.0 simulate resonant, boomy halls.
+
+argument::highCut
+High cut frequency in Hz (`1000..16000`). Applies a low-pass filter to simulate high-frequency absorption.
+
+argument::highXover
+High crossover frequency in Hz (`1000..16000`). The frequency above which the `highMult` decay multiplier is applied.
+
+argument::highMult
+High-frequency decay multiplier (`0.2..1.2`). Scales the decay time for high frequencies. Lower values simulate softer, highly absorbent wall materials (warm halls); higher values simulate hard, reflective surfaces (bright halls).
+
+argument::spin
+Modulation spin in Hz (`0..10`). The rate at which the internal delay lines are modulated. Adds chorus-like movement to the tail.
+
+argument::wander
+Modulation wander in milliseconds (`0..40`). The depth of the internal delay line modulation. High values make the tail sound lush and thick, but excessive amounts can induce pitch detuning.
+
+argument::decay
+Decay time in seconds (`0.1..10`). The time it takes for the mid-band late reverb tail to fade to silence (RT60).
+
+argument::earlySend
+Early-to-late send in percent (`0..100`). Controls how much of the early reflections are fed into the late reverb generator, intertwining the initial space cues with the long tail.
+
+argument::modulation
+Modulation amount in percent (`0..100`). A macro control scaling the overall intensity of the chorus modulation.
+
+Examples::
+
+code::
+(
+{
+	// Synthetic snare
+	var src = WhiteNoise.ar * EnvGen.ar(Env.perc(0.01, 0.2), Impulse.ar(0.5)) * 0.5;
+	
+	// Synthetic high-bpm hi-hat:
+	// var src = HPF.ar(WhiteNoise.ar, 8000) * EnvGen.ar(Env.perc(0.005, 0.05), Impulse.ar(8)) * 0.5;
+	
+	// For live input instead:
+	// var src = SoundIn.ar(0);
+	
+	HallDF.ar(
+		inL: src,
+		inR: src,
+		dry: 80.0,
+		early: 30.0,
+		late: 50.0,
+		size: 40.0,
+		decay: 2.5
+	);
+}.play;
+)
+::

@@ -1,0 +1,70 @@
+class:: EarlyReflectionsDF
+summary:: Dragonfly early-reflections reverb UGen
+categories:: UGens>Effects
+related:: Guides/DragonFlyReverb, Classes/HallDF, Classes/PlateDF, Classes/RoomDF
+
+Description::
+
+Native SuperCollider port of Michael Willis's Dragonfly Early Reflections. This UGen utilizes the Freeverb3 `earlyref` model to simulate the initial, discrete echoes that occur when a sound bounces off the walls, floor, and ceiling of a space before blending into a dense reverberant tail. 
+
+Unlike algorithmic reverbs that rely on highly diffuse feedback networks, the `earlyref` algorithm uses a series of meticulously tuned, tapped delay lines. These taps represent specific geometric reflection paths (e.g., source to left wall to listener). By omitting the late reverberation tail entirely, this UGen is highly effective for pushing a dry source back in the stereo field and providing a sense of physical acoustic space and width without cluttering the mix.
+
+classmethods::
+
+method::ar
+
+argument::inL
+Left input.
+
+argument::inR
+Right input.
+
+argument::dry
+Dry level in percent (`0..100`). Controls the volume of the unaffected input signal.
+
+argument::wet
+Wet level in percent (`0..100`). Controls the volume of the early reflections.
+
+argument::program
+Early-reflection program index (`0..7`). Selects different geometric delay tap patterns, fundamentally changing the perceived shape and acoustic character of the room.
+
+argument::size
+Room size in meters (`10..60`). Scales the delay times of the reflection taps. Larger values create a longer gap between the direct sound and the reflections, increasing the perceived physical dimensions of the space.
+
+argument::width
+Stereo width in percent (`50..150`). Enhances or reduces the panning extremity of the individual reflection taps, effectively widening or narrowing the stereo image.
+
+argument::lowCut
+Low cut frequency in Hz (`0..200`). Applies a high-pass filter to the reflections to reduce low-end rumble and mud.
+
+argument::highCut
+High cut frequency in Hz (`1000..16000`). Applies a low-pass filter to simulate the natural absorption of high frequencies by air and physical boundaries. Lower values result in a darker, more muffled reflection profile.
+
+Examples::
+
+code::
+(
+{
+	// Synthetic snare
+	var src = WhiteNoise.ar * EnvGen.ar(Env.perc(0.01, 0.2), Impulse.ar(1)) * 0.5;
+	
+	// Synthetic high-bpm hi-hat:
+	// var src = HPF.ar(WhiteNoise.ar, 8000) * EnvGen.ar(Env.perc(0.005, 0.05), Impulse.ar(8)) * 0.5;
+	
+	// For live input instead:
+	// var src = SoundIn.ar(0);
+	
+	EarlyReflectionsDF.ar(
+		inL: src,
+		inR: src,
+		dry: 50.0,
+		wet: 50.0,
+		program: 3, // Room program
+		size: 20.0,
+		width: 100.0,
+		lowCut: 100.0,
+		highCut: 10000.0
+	);
+}.play;
+)
+::

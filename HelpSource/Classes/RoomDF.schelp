@@ -1,0 +1,99 @@
+class:: RoomDF
+summary:: Dragonfly room reverb UGen
+categories:: UGens>Effects
+related:: Guides/DragonFlyReverb, Classes/EarlyReflectionsDF, Classes/HallDF, Classes/PlateDF
+
+Description::
+
+Native SuperCollider port of Michael Willis's Dragonfly Room Reverb. This UGen combines Dragonfly's Freeverb3 `earlyref` path with the scaled-down `progenitor2` late-reverb model to simulate smaller, tighter acoustic spaces. It accurately preserves the C++ DSP structure and parameter mapping of the original VST3 plugin without requiring a host environment.
+
+While code::HallDF:: uses the massive `zrev2` delay network, code::RoomDF:: uses the `progenitor2` network. This network features a faster buildup of reflection density and a tighter overall delay scale. It is ideal for placing sounds in realistic studio rooms, vocal booths, and small performance spaces where the excessive modulation and long, blooming tails of a concert hall would be out of place.
+
+classmethods::
+
+method::ar
+
+argument::inL
+Left input.
+
+argument::inR
+Right input.
+
+argument::dry
+Dry level in percent (`0..100`). Controls the volume of the unaffected input signal.
+
+argument::early
+Early-reflection level in percent (`0..100`). Controls the volume of the initial geometric echoes.
+
+argument::earlySend
+Early-to-late send in percent (`0..100`). Controls how much of the early reflection energy is fed into the late reverberation tail generator.
+
+argument::late
+Late-reverb level in percent (`0..100`). Controls the volume of the dense reverberation tail.
+
+argument::size
+Size in meters (`8..32`). Affects the overall scale of the room. Smaller values sound like a tight booth, while larger values sound like a small live room.
+
+argument::width
+Stereo width in percent (`50..150`). Widens or narrows the stereo spread of the reverb.
+
+argument::predelay
+Predelay in milliseconds (`0..100`). The delay before the late reverb starts.
+
+argument::decay
+Decay time in seconds (`0.1..10`). The time it takes for the late reverb tail to fade to silence (RT60).
+
+argument::diffuse
+Diffusion in percent (`0..100`). Controls the smearing of reflections. High diffusion sounds smooth; low diffusion reveals individual echoes.
+
+argument::spin
+Modulation spin in Hz (`0..5`). The rate of chorus-like modulation inside the reverberation network. Usually kept low for realistic rooms.
+
+argument::wander
+Modulation wander in percent (`0..100`). The depth of the internal modulation.
+
+argument::inHighCut
+Input high cut frequency in Hz (`1000..16000`). Low-pass filter applied to the input signal before it enters the reverb generator.
+
+argument::earlyDamp
+Early damping frequency in Hz (`1000..16000`). Simulates the high-frequency absorption of the walls specifically for the early reflections.
+
+argument::lateDamp
+Late damping frequency in Hz (`1000..16000`). Simulates the high-frequency absorption of the walls and air for the late reverberation tail, causing higher frequencies to decay faster.
+
+argument::boost
+Low boost in percent (`0..100`). Amplifies low frequencies in the reverb tail, simulating the boomy resonance characteristic of many small enclosed rooms.
+
+argument::boostLPF
+Boost frequency in Hz (`50..1050`). The cutoff frequency below which the `boost` is applied.
+
+argument::inLowCut
+Input low cut frequency in Hz (`0..200`). High-pass filter applied to the input to prevent low-end rumble from cluttering the reverb.
+
+Examples::
+
+code::
+(
+{
+	// Synthetic snare
+	var src = WhiteNoise.ar * EnvGen.ar(Env.perc(0.01, 0.2), Impulse.ar(1)) * 0.5;
+	
+	// Synthetic high-bpm hi-hat:
+	// var src = HPF.ar(WhiteNoise.ar, 8000) * EnvGen.ar(Env.perc(0.005, 0.05), Impulse.ar(8)) * 0.5;
+	
+	// For live input instead:
+	// var src = SoundIn.ar(0);
+	
+	RoomDF.ar(
+		inL: src,
+		inR: src,
+		dry: 80.0,
+		early: 40.0,
+		late: 40.0,
+		size: 15.0,
+		decay: 0.8,
+		diffuse: 80.0
+	);
+}.play;
+)
+::

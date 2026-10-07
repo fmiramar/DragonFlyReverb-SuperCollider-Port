@@ -1,0 +1,30 @@
+.DS_Store
+._*
+
+# CMake/build products
+build*/
+cmake-build-*/
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+install_manifest.txt
+*.scx
+*.so
+*.dylib
+*.dll
+*.tar.gz
+*.zip
+
+# Generated audio/test output
+*.aiff
+*.wav
+*.osc
+
+# Local VSTPlugin symlink created by tests/run_ab_vst.sh
+tests/vstplugin-scsynth-only/
+
+# Editor/local files
+.idea/
+.vscode/
+*.swp
+*.swo
